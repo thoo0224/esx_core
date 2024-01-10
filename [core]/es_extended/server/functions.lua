@@ -113,14 +113,14 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 								local merge = table.concat(args, " ")
 
 								newArgs[v.name] = string.sub(merge, lenght)
-                            elseif v.type == 'coordinate' then
-                                local coord = tonumber(args[k]:match("(-?%d+%.?%d*)"))
-                                if(not coord) then
-                                    error = TranslateCap('commanderror_argumentmismatch_number', k)
-                                else
-                                    newArgs[v.name] = coord
-                                end
-						    end
+							elseif v.type == 'coordinate' then
+								local coord = tonumber(args[k]:match("(-?%d+%.?%d*)"))
+								if (not coord) then
+									error = TranslateCap('commanderror_argumentmismatch_number', k)
+								else
+									newArgs[v.name] = coord
+								end
+							end
 						end
 
 						--backwards compatibility
@@ -165,13 +165,13 @@ function ESX.RegisterCommand(name, group, cb, allowConsole, suggestion)
 end
 
 local function updateHealthAndArmorInMetadata(xPlayer)
-    local ped = GetPlayerPed(xPlayer.source)
-    xPlayer.setMeta('health', GetEntityHealth(ped))
-    xPlayer.setMeta('armor',GetPedArmour(ped))
+	local ped = GetPlayerPed(xPlayer.source)
+	xPlayer.setMeta('health', GetEntityHealth(ped))
+	xPlayer.setMeta('armor', GetPedArmour(ped))
 end
 
 function Core.SavePlayer(xPlayer, cb)
-    updateHealthAndArmorInMetadata(xPlayer)
+	updateHealthAndArmorInMetadata(xPlayer)
 	local parameters <const> = {
 		json.encode(xPlayer.getAccounts(true)),
 		xPlayer.job.name,
@@ -209,7 +209,7 @@ function Core.SavePlayers(cb)
 	local parameters = {}
 
 	for _, xPlayer in pairs(ESX.Players) do
-        updateHealthAndArmorInMetadata(xPlayer)
+		updateHealthAndArmorInMetadata(xPlayer)
 		parameters[#parameters + 1] = {
 			json.encode(xPlayer.getAccounts(true)),
 			xPlayer.job.name,
@@ -235,7 +235,8 @@ function Core.SavePlayers(cb)
 				return cb()
 			end
 
-			print(('[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms'):format(#parameters, #parameters > 1 and 'players' or 'player', ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
+			print(('[^2INFO^7] Saved ^5%s^7 %s over ^5%s^7 ms'):format(#parameters, #parameters > 1 and 'players' or 'player',
+				ESX.Math.Round((os.time() - startTime) / 1000000, 2)))
 		end
 	)
 end
@@ -277,37 +278,39 @@ function ESX.GetExtendedPlayers(key, val)
 end
 
 function ESX.GetNumPlayers(key, val)
-    if not key then
-        return #GetPlayers()
-    end
+	if not key then
+		return #GetPlayers()
+	end
 
-    if type(val) == "table" then
-        local numPlayers = {}
-        if key == "job" then
-            for _, v in ipairs(val) do
-                numPlayers[v] = (ESX.JobsPlayerCount[v] or 0)
-            end
-            return numPlayers
-        end
+	if type(val) == "table" then
+		local numPlayers = {}
+		if key == "job" then
+			for _, v in ipairs(val) do
+				numPlayers[v] = (ESX.JobsPlayerCount[v] or 0)
+			end
+			return numPlayers
+		end
 
-        local filteredPlayers = ESX.GetExtendedPlayers(key, val)
-        for i, v in pairs(filteredPlayers) do
-            numPlayers[i] = (#v or 0)
-        end
-        return numPlayers
-    end
+		local filteredPlayers = ESX.GetExtendedPlayers(key, val)
+		for i, v in pairs(filteredPlayers) do
+			numPlayers[i] = (#v or 0)
+		end
+		return numPlayers
+	end
 
-    if key == "job" then
-        return (ESX.JobsPlayerCount[val] or 0)
-    end
+	if key == "job" then
+		return (ESX.JobsPlayerCount[val] or 0)
+	end
 
-    return #ESX.GetExtendedPlayers(key, val)
+	return #ESX.GetExtendedPlayers(key, val)
 end
 
+---@return ExtendedPlayer
 function ESX.GetPlayerFromId(source)
 	return ESX.Players[tonumber(source)]
 end
 
+---@return ExtendedPlayer
 function ESX.GetPlayerFromIdentifier(identifier)
 	return Core.playersByIdentifier[identifier]
 end
@@ -318,8 +321,8 @@ function ESX.GetIdentifier(playerId)
 		return "ESX-DEBUG-LICENCE"
 	end
 
-    local identifier = GetPlayerIdentifierByType(playerId, 'license')
-    return identifier and identifier:gsub('license:', '')
+	local identifier = GetPlayerIdentifierByType(playerId, 'license')
+	return identifier and identifier:gsub('license:', '')
 end
 
 ---@param model string|number
@@ -407,7 +410,16 @@ function ESX.CreateJob(name, label, grades)
 	local job = { name = name, label = label, grades = {} }
 
 	for _, v in pairs(grades) do
-		job.grades[tostring(v.grade)] = { job_name = name, grade = v.grade, name = v.name, label = v.label, salary = v.salary, skin_male = {}, skin_female = {} }
+		job.grades[tostring(v.grade)] = {
+			job_name = name,
+			grade = v.grade,
+			name = v.name,
+			label = v.label,
+			salary = v
+					.salary,
+			skin_male = {},
+			skin_female = {}
+		}
 		parameters[#parameters + 1] = { name, v.grade, v.name, v.label, v.salary }
 	end
 
@@ -463,7 +475,8 @@ function ESX.UseItem(source, item, ...)
 			local success, result = pcall(itemCallback, source, item, ...)
 
 			if not success then
-				return result and print(result) or print(('[^3WARNING^7] An error occured when using item ^5"%s"^7! This was not caused by ESX.'):format(item))
+				return result and print(result) or
+						print(('[^3WARNING^7] An error occured when using item ^5"%s"^7! This was not caused by ESX.'):format(item))
 			end
 		end
 	else
@@ -514,7 +527,7 @@ if not Config.OxInventory then
 	function ESX.CreatePickup(itemType, name, count, label, playerId, components, tintIndex, coords)
 		local pickupId = (Core.PickupId == 65635 and 0 or Core.PickupId + 1)
 		local xPlayer = ESX.Players[playerId]
-		coords = ( (type(coords) == "vector3" or type(coords) == "vector4") and coords.xyz or xPlayer.getCoords(true))
+		coords = ((type(coords) == "vector3" or type(coords) == "vector4") and coords.xyz or xPlayer.getCoords(true))
 
 		Core.Pickups[pickupId] = { type = itemType, name = name, count = count, label = label, coords = coords }
 
