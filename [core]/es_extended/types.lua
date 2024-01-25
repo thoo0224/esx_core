@@ -57,15 +57,15 @@
 ---@field set fun(k:string, v:any)
 ---@field get fun(k:string):any
 ---@field getAccounts fun(minimal:boolean):table<string, number>
----@field getAccount fun(account:AccountEnum):number
+---@field getAccount fun(account:AccountEnum):Account
 ---@field getInventory fun(minimal:boolean):InventoryItem[]
 ---@field getJob fun():Job
 ---@field getLoadout fun(minimal:boolean):table<string, any>
 ---@field getName fun():string
 ---@field setName fun(newName:string)
----@field setAccountMoney fun(accountName:string, money:number, reason:string)
----@field addAccountMoney fun(accountName:string, money:number, reason:string)
----@field removeAccountMoney fun(accountName:string, money:number, reason:string)
+---@field setAccountMoney fun(accountName:AccountEnum, money:number, reason:string)
+---@field addAccountMoney fun(accountName:AccountEnum, money:number, reason:string)
+---@field removeAccountMoney fun(accountName:AccountEnum, money:number, reason:string)
 ---@field getInventoryItem fun(itemName:string):InventoryItem
 ---@field addInventoryItem fun(itemName:string, count:number)
 ---@field removeInventoryItem fun(itemName:string, count:number)
